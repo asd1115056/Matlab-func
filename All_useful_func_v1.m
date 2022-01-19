@@ -20,56 +20,53 @@ function varargout = All_useful_func_v1(request, varargin)
 
 end
 
-function IP(Path, load_files_name,varargin)
-    p = inputParser;
+function IP(Path, load_files_name, varargin)
+  p = inputParser;
 
-    addRequired(p, 'Path');
-    addRequired(p, 'load_files_name');
-  
-    parse(p, Path, load_files_name, varargin{:}); 
-  
-    len = size(p.Results.load_files_name);
+  addRequired(p, 'Path');
+  addRequired(p, 'load_files_name');
 
-    A=[];
-  
-    for i = 1:len(2)
-  
-  
-        data = load(fullfile(p.Results.Path, p.Results.load_files_name{1, i}), 'Irms_x_y');
-        data = data.('Irms_x_y');
+  parse(p, Path, load_files_name, varargin{:});
 
-        len1=size(data);
+  len = size(p.Results.load_files_name);
 
-      if (len1(2)) == 1
+  A = [];
 
-        for k = 1:len1(2)
-          o(k) = sqrt(data(:, :, k));
-        end
+  for i = 1:len(2)
 
-      else
+    data = load(fullfile(p.Results.Path, p.Results.load_files_name{1, i}), 'Irms_x_y');
+    data = data.('Irms_x_y');
 
-        for k = 1:len1(2)
-          o(k) = sqrt(mean(data(:, :, k)));
-        end
+    len1 = size(data);
 
+    if (len1(2)) == 1
+
+      for k = 1:len1(2)
+        o(k) = sqrt(data(:, :, k));
       end
 
-      o=sum(o);
+    else
 
-      A = [A; o];
-
-    end
-
-    for iii=1:len(2)
-
-      temp=100*(1-(A(1,1)/A(iii,1)));
-      disp(append(p.Results.load_files_name{1, iii},' IP: ', string(temp),' %'));
+      for k = 1:len1(2)
+        o(k) = sqrt(mean(data(:, :, k)));
+      end
 
     end
+
+    o = sum(o);
+
+    A = [A; o];
+
+  end
+
+  for iii = 1:len(2)
+
+    temp = 100 * (1 - (A(1, 1) / A(iii, 1)));
+    disp(append(p.Results.load_files_name{1, iii}, ' IP: ', string(temp), ' %'));
+
+  end
 
 end
-
-
 
 function Runtime(Path, load_files_name, varargin)
   p = inputParser;
@@ -83,14 +80,12 @@ function Runtime(Path, load_files_name, varargin)
 
   for i = 1:len(2)
 
+    data = load(fullfile(p.Results.Path, p.Results.load_files_name{1, i}), 'runtime');
+    data = data.('runtime');
+    data = append(string(data), 's');
 
-      data = load(fullfile(p.Results.Path, p.Results.load_files_name{1, i}), 'runtime');
-      data = data.('runtime');
-      data=append(string(data),'s');
+    disp([p.Results.load_files_name{1, i}, 'Runtime:', data]);
 
-
-    disp([p.Results.load_files_name{1, i},'Runtime:', data]);
-    
   end
 
 end
@@ -177,6 +172,7 @@ function Draw_Graph(DateInput, Lines, varargin)
     LegendLocationDefault = 'best';
     SaveDefault = 'off';
     figure_nameDefault = '';
+    figure_sizeDefault = 'auto';
 
     is_sempty = @(x) (x);
 
@@ -191,6 +187,7 @@ function Draw_Graph(DateInput, Lines, varargin)
     addParameter(p, 'LegendLocation', LegendLocationDefault);
     addParameter(p, 'Save', SaveDefault);
     addParameter(p, 'figure_name', figure_nameDefault);
+    addParameter(p, 'figure_size', figure_sizeDefault);
 
     parse(p, DateInput, Lines, varargin{:});
 
@@ -234,6 +231,7 @@ function Draw_Graph(DateInput, Lines, varargin)
     SaveDefault = 'off';
     figure_nameDefault = '';
     MarkerIndicesDefault = 1;
+    figure_sizeDefault = 'auto';
 
     is_sempty = @(x) (x);
 
@@ -248,6 +246,7 @@ function Draw_Graph(DateInput, Lines, varargin)
     addParameter(p, 'LegendLocation', LegendLocationDefault);
     addParameter(p, 'Save', SaveDefault);
     addParameter(p, 'figure_name', figure_nameDefault);
+    addParameter(p, 'figure_size', figure_sizeDefault);
 
     parse(p, DateInput, Lines, varargin{:});
 
@@ -288,8 +287,12 @@ function Draw_Graph(DateInput, Lines, varargin)
 
   legend({p.Results.Lines{:, 2}}', 'Location', p.Results.LegendLocation, 'FontSize', p.Results.FontSize);
 
-  set(gcf, 'position', [50, 50, 1600, 900]); %設定figure的位置和大小
-  set(gcf, 'color', 'white'); %設定figure的背景顏色
+  if p.Results.figure_size == 'auto'
+    set(gcf, 'position', [50, 50, 1600, 900]); %設定figure的位置和大小
+    set(gcf, 'color', 'white'); %設定figure的背景顏色
+  else
+    set(gcf, 'PaperUnits', 'inches', 'PaperPosition', [50 50 10 6]);
+  end
 
   if p.Results.Save ~= 'off'
     set(gcf, 'color', 'white', 'paperpositionmode', 'auto'); %保持長寬比&背景顏色儲存圖片
