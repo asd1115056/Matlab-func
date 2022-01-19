@@ -500,7 +500,9 @@ function Func_Run(runsometing, load_file, save_file_name, varargin)
     [~, name, ~] = fileparts(save_file_name);
     disp(name);
     disp(append('Load_noise=', noisetype));
+    if exist ('Vel','Acc')==1
     disp(append('Vel=', num2str(Vel), ' ', 'Acc=', num2str(Acc)));
+    end
     disp(append('NProb=', num2str(NProb)));
     disp('Finish');
     disp(['Runtime:', num2str(runtime), ' s']);
