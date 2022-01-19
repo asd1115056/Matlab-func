@@ -170,9 +170,9 @@ function Draw_Graph(DateInput, Lines, varargin)
     LineWidthDefault = 3;
     MarkerSizeDefault = 15;
     LegendLocationDefault = 'best';
-    SaveDefault = 'off';
+    SaveDefault = "off";
     figure_nameDefault = '';
-    figure_sizeDefault = 'auto';
+    figure_sizeDefault = "auto";
 
     is_sempty = @(x) (x);
 
@@ -228,10 +228,10 @@ function Draw_Graph(DateInput, Lines, varargin)
     LineWidthDefault = 3;
     MarkerSizeDefault = 15;
     LegendLocationDefault = 'best';
-    SaveDefault = 'off';
+    SaveDefault = "off";
     figure_nameDefault = '';
     MarkerIndicesDefault = 1;
-    figure_sizeDefault = 'auto';
+    figure_sizeDefault = "auto";
 
     is_sempty = @(x) (x);
 
@@ -287,14 +287,14 @@ function Draw_Graph(DateInput, Lines, varargin)
 
   legend({p.Results.Lines{:, 2}}', 'Location', p.Results.LegendLocation, 'FontSize', p.Results.FontSize);
 
-  if p.Results.figure_size == 'auto'
+  if p.Results.figure_size == "auto"
     set(gcf, 'position', [50, 50, 1600, 900]); %設定figure的位置和大小
     set(gcf, 'color', 'white'); %設定figure的背景顏色
   else
     set(gcf, 'PaperUnits', 'inches', 'PaperPosition', [50 50 10 6]);
   end
 
-  if p.Results.Save ~= 'off'
+  if p.Results.Save ~= "off"
     set(gcf, 'color', 'white', 'paperpositionmode', 'auto'); %保持長寬比&背景顏色儲存圖片
     saveas(gcf, append(p.Results.figure_name, '.png')); %儲存圖片
     savefig(append(p.Results.figure_name, '.fig'))
