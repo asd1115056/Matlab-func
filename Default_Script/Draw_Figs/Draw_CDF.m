@@ -1,9 +1,6 @@
 clc;
 clearvars
 
-%讀取預設好的axis
-fig_border;
-Dates = Fig_A;
 %-----------------------------------------------------------------------------------------------------------%
 %{"讀取檔名","圖Legend顯示的名稱","線顏色(hex)","Line Style"," Line Marker" }
 Lines = {
@@ -38,17 +35,15 @@ for y = 1:2 % for Fixed or Markov
         for i = 1:2 %for speed
 
             parfor l = 1:7 % for n types different nlos prob
-                Fig_name = append('RMSE-', path2{y}, ' ', path3{j}, ' ', path4{i}{2}, ' ', path5{l}{6}, '_5k');
+
+                Fig_name = append('CDF-', path2{y}, ' ', path3{j}, ' ', path4{i}{2}, ' ', path5{l}{6}, '_5k');
                 Path = fullfile(Dir, name, path1{1}, path2{y}, path3{j}, path4{i}{2}, path5{l}{6});
-                RMSE_test = All_useful_func_v1('RMSE', Path, {Lines{:, 1}}, 'Irms_x_y', [1, 100], [1, 5001]);
-                %auto set fig axis
-                All_useful_func_v1('Draw_Graph', RMSE_test, Lines, 'x_y_label', {'Time step(n)', 'RMS x-y location error (m)'}, 'Save', "on", 'figure_name', Fig_name);
-                %load fig axis from fig_border
-                %All_useful_func_v1('Draw_Graph', RMSE_test, Lines, 'LegendLocation', Dates{j, i}{l, 1}, 'figure_axis', [0, 5000, Dates{j, i}{l, 2}, Dates{j, i}{l, 3}], 'x_y_label', {'{\sigma}_{NL} (m)', 'Average RMSE x-y location error (m)'}, 'Save', "on", 'figure_name', Fig_name);
+                RMSE_test = All_useful_func_v1('CDF', Path, {Lines{:, 1}}, 'Irms_x_y', [1, 100], [1, 151]);
+                All_useful_func_v1('Draw_Graph', RMSE_test, Lines, 'figure_axis', [0, 100, 0, 1], 'LegendLocation', 'northeast', 'x_y_label', {'RMS x-y location error (m)', 'CDF'}, 'Save', "on", 'figure_name', Fig_name);
             end
 
-            %movefile('*.png', fullfile(Dir, name, 'fig', path1{1}, 'RMSE(Ours)', path2{y}, path3{j}, path4{i}{2}))
-            %movefile('*.fig', fullfile(Dir, name, 'fig', path1{1}, 'RMSE(Ours)', path2{y}, path3{j}, path4{i}{2}))
+            movefile('*.png', fullfile(Dir, name, 'fig', path1{1}, 'CDF', path2{y}, path3{j}, path4{i}{2}))
+            movefile('*.fig', fullfile(Dir, name, 'fig', path1{1}, 'CDF', path2{y}, path3{j}, path4{i}{2}))
 
         end
 
@@ -56,7 +51,7 @@ for y = 1:2 % for Fixed or Markov
 
 end
 
-close all;
+close all
 
 %-----------------------------------------------------------------------------------------------------------%
 

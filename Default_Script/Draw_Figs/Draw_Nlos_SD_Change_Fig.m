@@ -33,22 +33,22 @@ addpath(Dir);
 
 for y = 1:2 % for Fixed or Markov
 
-    for j = 1:2 %for nlos type
+    for j = 1:2 % for nlos type
 
         for i = 1:2 %for speed
 
-            parfor l = 1:7 % for n types different nlos prob
-                Fig_name = append('RMSE-', path2{y}, ' ', path3{j}, ' ', path4{i}{2}, ' ', path5{l}{6}, '_5k');
-                Path = fullfile(Dir, name, path1{1}, path2{y}, path3{j}, path4{i}{2}, path5{l}{6});
-                RMSE_test = All_useful_func_v1('RMSE', Path, {Lines{:, 1}}, 'Irms_x_y', [1, 100], [1, 5001]);
+            parfor l = 1:7 % for 4 different nlos prob
+                Fig_name = append('Average-RMSE-', path2{y}, ' ', path3{j}, ' ', path4{i}{2}, ' ', path5{l}{6}, '_5k');
+                Path = fullfile(Dir, name, path1{2}, path2{y}, path3{j}, path4{i}{2}, path5{l}{6});
+                RMSE_test = All_useful_func_v1('RMSE', Path, {Lines{:, 1}}, 'Irms_x_y', [1, 100], [1, 5001], 'X_Axis_Multiple', 24);
                 %auto set fig axis
-                All_useful_func_v1('Draw_Graph', RMSE_test, Lines, 'x_y_label', {'Time step(n)', 'RMS x-y location error (m)'}, 'Save', "on", 'figure_name', Fig_name);
+                All_useful_func_v1('Draw_Graph', RMSE_test, Lines, 'figure_axis', [0, 50 * 25, 0, 150], 'x_y_label', {'{\sigma}_{NL} (m)', 'Average RMSE x-y location error (m)'}, 'Save', "on", 'figure_name', Fig_name);
                 %load fig axis from fig_border
-                %All_useful_func_v1('Draw_Graph', RMSE_test, Lines, 'LegendLocation', Dates{j, i}{l, 1}, 'figure_axis', [0, 5000, Dates{j, i}{l, 2}, Dates{j, i}{l, 3}], 'x_y_label', {'{\sigma}_{NL} (m)', 'Average RMSE x-y location error (m)'}, 'Save', "on", 'figure_name', Fig_name);
+                %All_useful_func_v1('Draw_Graph', RMSE_test, Lines, 'figure_axis', [0, 50 * 25, Dates{j, i}{l, 2}, Dates{j, i}{l, 3}], 'LegendLocation', Dates{j, i}{l, 1}, 'x_y_label', {'{\sigma}_{NL} (m)', 'Average RMSE x-y location error (m)'}, 'Save', "on", 'figure_name', Fig_name);
             end
 
-            %movefile('*.png', fullfile(Dir, name, 'fig', path1{1}, 'RMSE(Ours)', path2{y}, path3{j}, path4{i}{2}))
-            %movefile('*.fig', fullfile(Dir, name, 'fig', path1{1}, 'RMSE(Ours)', path2{y}, path3{j}, path4{i}{2}))
+            % movefile('*.png', fullfile(Dir, name, 'fig', path1{2}, 'With_MPP_Fuzzy_UKF_modify_R_3', path2{y}, path3{j}, path4{i}{2}))
+            % movefile('*.fig', fullfile(Dir, name, 'fig', path1{2}, 'With_MPP_Fuzzy_UKF_modify_R_3', path2{y}, path3{j}, path4{i}{2}))
 
         end
 
@@ -56,8 +56,7 @@ for y = 1:2 % for Fixed or Markov
 
 end
 
-close all;
-
+close all
 %-----------------------------------------------------------------------------------------------------------%
 
 toc
