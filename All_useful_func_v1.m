@@ -1,3 +1,4 @@
+%back up
 function varargout = All_useful_func_v1(request, varargin)
 
   switch request
@@ -20,7 +21,7 @@ function varargout = All_useful_func_v1(request, varargin)
 
 end
 
-function IP(Path, load_files_name, varargin)
+function bb=IP(Path, load_files_name, varargin)
   p = inputParser;
 
   addRequired(p, 'Path');
@@ -34,37 +35,38 @@ function IP(Path, load_files_name, varargin)
 
   for i = 1:len(2)
 
-    data = load(fullfile(p.Results.Path, p.Results.load_files_name{1, i}), 'Irms_x_y');
-    data = data.('Irms_x_y');
+      data = load(fullfile(p.Results.Path, p.Results.load_files_name{1, i}), 'Irms_x_y');
+      data = data.('Irms_x_y');
 
-    len1 = size(data);
+      len1 = size(data);
 
-    if (len1(2)) == 1
+      if (len1(2)) == 1
 
-      for k = 1:len1(2)
-        o(k) = sqrt(data(:, :, k));
+          for k = 1:len1(3)
+              o(k) = sqrt(data(:, :, k));
+          end
+
+      else
+
+          for k = 1:len1(3)
+              o(k) = sqrt(mean(data(:, :, k)));
+          end
+
       end
 
-    else
+      o = sum(o);
 
-      for k = 1:len1(2)
-        o(k) = sqrt(mean(data(:, :, k)));
-      end
-
-    end
-
-    o = sum(o);
-
-    A = [A; o];
+      A = [A; o];
 
   end
-
+  
+  bb=[];
   for iii = 1:len(2)
-
-    temp = 100 * (1 - (A(1, 1) / A(iii, 1)));
-    disp(append(p.Results.load_files_name{1, iii}, ' IP: ', string(temp), ' %'));
-
+      temp = 100 * (1 - (A(1, 1) / A(iii, 1)));
+      disp(append(p.Results.load_files_name{1, iii}, ' IP: ', string(temp), ' %'));
+      bb=[bb;temp];
   end
+  disp(' ');
 
 end
 
@@ -206,13 +208,26 @@ function Draw_Graph(DateInput, Lines, varargin)
 
     len = size(p.Results.DateInput);
 
+    switch_sd_or_rmse = 0;
+    DDD = isnan(p.Results.DateInput(:, 1));
+    DDD = sum(DDD);
+
+    if DDD == len(1)
+        switch_sd_or_rmse = 1;
+    end
+
     for i = 1:len(1)
-      t = 0:len(2) - 1;
-      Z = isfinite(p.Results.DateInput(i, t + 1));
-      VVV = p.Results.DateInput(i, t + 1);
-      %c = plot(t(Z), p.Results.DateInput(i, t + 1));
-      c = plot(t(Z), VVV(Z));
-      c.Color = p.Results.Lines{i, 3};
+        t = 0:len(2) - 1;
+
+        if switch_sd_or_rmse == 0
+            c = plot(t, p.Results.DateInput(i, t + 1));
+        else
+            Z = isfinite(p.Results.DateInput(i, t + 1));
+            VVV = p.Results.DateInput(i, t + 1);
+            c = plot(t(Z), VVV(Z));
+        end
+
+  c.Color = p.Results.Lines{i, 3};
       c.LineStyle = p.Results.Lines{i, 4};
       c.Marker = p.Results.Lines{i, 5};
       c.LineWidth = p.Results.LineWidth;
@@ -287,12 +302,10 @@ function Draw_Graph(DateInput, Lines, varargin)
 
   legend({p.Results.Lines{:, 2}}', 'Location', p.Results.LegendLocation, 'FontSize', p.Results.FontSize);
 
-  if p.Results.figure_size == "auto"
-    set(gcf, 'position', [50, 50, 1600, 900]); %設定figure的位置和大小
+    %set(gcf, 'position', [50, 50, 1280, 720]); %設定figure的位置和大小
+    set(gcf, 'position', [50, 50, 1080, 720]); %設定figure的位置和大小
     set(gcf, 'color', 'white'); %設定figure的背景顏色
-  else
-    set(gcf, 'PaperUnits', 'inches', 'PaperPosition', [50 50 10 6]);
-  end
+    %set(gcf, 'PaperUnits', 'inches', 'PaperPosition', [50 50 10 6]);
 
   if p.Results.Save ~= "off"
     set(gcf, 'color', 'white', 'paperpositionmode', 'auto'); %保持長寬比&背景顏色儲存圖片
@@ -470,7 +483,7 @@ function Func_Run(runsometing, load_file, save_file_name, varargin)
   addRequired(p, 'load_file', is_valid_string);
   addRequired(p, 'save_file_name', is_valid_string);
   addParameter(p, 'LoadFuzzyfile', LoadFuzzyfileDefault);
-  addParameter(p, 'LossData', LossDataDefault);
+  %addParameter(p, 'LossData', LossDataDefault);
   parse(p, runsometing, load_file, save_file_name, varargin{:});
 
   % o.runsometing = p.Results.runsometing;
@@ -486,11 +499,11 @@ function Func_Run(runsometing, load_file, save_file_name, varargin)
     readfis_file_name = p.Results.LoadFuzzyfile;
   end
 
-  if p.Results.LossData
-    gamma_r = missing_data;
-  else
-    gamma_r = ones(1, 5001);
-  end
+  % if p.Results.LossData
+  %   gamma_r = missing_data;
+  % else
+  %   gamma_r = ones(1, 5001);
+  % end
 
   try
     run(p.Results.runsometing);
@@ -501,7 +514,7 @@ function Func_Run(runsometing, load_file, save_file_name, varargin)
     disp(name);
     disp(append('Load_noise=', noisetype));
 
-    if exist ('Vel', 'Acc') == 1
+    if exist ('Vel','var') && exist ('Acc','var') == 1
       disp(append('Vel=', num2str(Vel), ' ', 'Acc=', num2str(Acc)));
     end
 
