@@ -495,8 +495,9 @@ function Func_Run(runsometing, load_file, save_file_name, varargin)
   load(p.Results.load_file);
   save_file_name = p.Results.save_file_name;
 
-  if p.Results.LoadFuzzyfile
+  if ~isempty(p.Results.LoadFuzzyfile)
     readfis_file_name = p.Results.LoadFuzzyfile;
+	%readfis_file_name_2 = p.Results.LoadFuzzyfile(2);
   end
 
   % if p.Results.LossData
