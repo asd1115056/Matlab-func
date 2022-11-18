@@ -160,12 +160,16 @@ function Draw_Graph(DateInput, Lines, varargin)
 
   if ~iscell(DateInput)
     YY = length(DateInput(1, :));
+    ZZ = length(DateInput(:, 1));
 
-    %     if isfinite(DateInput(1, 1))
-    MarkerIndicesDefault = (YY - 1) / 50;
-    %     else
-    %       MarkerIndicesDefault = 1;
-    %     end
+    %CCC1=isnan(DateInput(:, 1));
+    CCC2 = isnan(DateInput(:, 2));
+
+    if sum(CCC2) == ZZ
+      MarkerIndicesDefault = 1;
+    else
+      MarkerIndicesDefault = (YY - 1) / 50;
+    end
 
     FontSizeDefault = 20;
     x_y_labelDefault = ["", ""];
